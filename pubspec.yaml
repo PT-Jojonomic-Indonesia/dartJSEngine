@@ -3,12 +3,15 @@ description: JS engine for Dart.
 author: Anurag Vohra<anuragvohraec@gmail.com>
 homepage: https://github.com/anuragvohraec/dartJSEngine.git
 version: 1.0.1
+publish_to: none
 
 environment:
-  sdk: ">=2.4.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  jsparser: ^2.0.1
+  # jsparser: ^2.0.1
+  jsparser:
+    path: ../parsejs.dart
   symbol_table: ^2.0.0
 dev_dependencies:
   test: ^1.6.5

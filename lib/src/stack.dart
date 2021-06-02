@@ -7,8 +7,8 @@ class CallStack {
 
   void clear() => _frames.clear();
 
-  void push(String filename, int line, String name) {
-    _frames.addFirst(new Frame(filename, line, name));
+  void push(String? filename, int? line, String? name) {
+    _frames.addFirst(new Frame(filename!, line!, name!));
   }
 
   void pop() {

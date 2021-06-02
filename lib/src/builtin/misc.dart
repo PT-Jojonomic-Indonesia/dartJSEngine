@@ -6,36 +6,36 @@ void loadMiscObjects(JSEngine jsengine) {
 
   var decodeUriFunction = new JsFunction(global, (jsengine, arguments, ctx) {
     try {
-      return new JsString(
-          Uri.decodeFull(arguments.getProperty(0.0, jsengine, ctx)?.toString()));
+      return new JsString(Uri.decodeFull(
+          arguments.getProperty(0.0, jsengine, ctx).toString()));
     } catch (_) {
       return arguments.getProperty(0.0, jsengine, ctx);
     }
   });
 
   var decodeUriComponentFunction =
-  new JsFunction(global, (jsengine, arguments, ctx) {
+      new JsFunction(global, (jsengine, arguments, ctx) {
     try {
-      return new JsString(
-          Uri.decodeComponent(arguments.getProperty(0.0, jsengine, ctx)?.toString()));
+      return new JsString(Uri.decodeComponent(
+          arguments.getProperty(0.0, jsengine, ctx).toString()));
     } catch (_) {
       return arguments.getProperty(0.0, jsengine, ctx);
     }
   });
-  var encodeUriFunction = new JsFunction(global, (jsengine, arguments,ctx) {
+  var encodeUriFunction = new JsFunction(global, (jsengine, arguments, ctx) {
     try {
-      return new JsString(
-          Uri.encodeFull(arguments.getProperty(0.0, jsengine, ctx)?.toString()));
+      return new JsString(Uri.encodeFull(
+          arguments.getProperty(0.0, jsengine, ctx).toString()));
     } catch (_) {
       return arguments.getProperty(0.0, jsengine, ctx);
     }
   });
 
   var encodeUriComponentFunction =
-  new JsFunction(global, (jsengine, arguments, ctx) {
+      new JsFunction(global, (jsengine, arguments, ctx) {
     try {
-      return new JsString(
-          Uri.encodeComponent(arguments.getProperty(0.0, jsengine, ctx)?.toString()));
+      return new JsString(Uri.encodeComponent(
+          arguments.getProperty(0.0, jsengine, ctx).toString()));
     } catch (_) {
       return arguments.getProperty(0.0, jsengine, ctx);
     }
@@ -55,12 +55,14 @@ void loadMiscObjects(JSEngine jsengine) {
 
   var isFinite = new JsFunction(global, (jsengine, arguments, ctx) {
     return new JsBoolean(
-        coerceToNumber(arguments.getProperty(0.0, jsengine, ctx), jsengine, ctx).isFinite);
+        coerceToNumber(arguments.getProperty(0.0, jsengine, ctx), jsengine, ctx)
+            .isFinite);
   });
 
   var isNaN = new JsFunction(global, (jsengine, arguments, ctx) {
     return new JsBoolean(
-        coerceToNumber(arguments.getProperty(0.0, jsengine, ctx), jsengine, ctx).isNaN);
+        coerceToNumber(arguments.getProperty(0.0, jsengine, ctx), jsengine, ctx)
+            .isNaN);
   });
 
   var parseFloatFunction = new JsFunction(global, (jsengine, arguments, ctx) {
@@ -82,7 +84,7 @@ void loadMiscObjects(JSEngine jsengine) {
 
   var printFunction = new JsFunction(
     global,
-        (jsengine, arguments, scope) {
+    (jsengine, arguments, scope) {
       arguments.valueOf.forEach(print);
     },
   );

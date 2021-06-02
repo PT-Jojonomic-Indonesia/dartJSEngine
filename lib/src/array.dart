@@ -26,7 +26,7 @@ class JsArray extends JsObject {
   }
 
   @override
-  JsObject getProperty(name, JSEngine samurai, JSContext ctx) {
+  JsObject? getProperty(name, JSEngine samurai, JSContext ctx) {
     if (name is num) {
       // TODO: RangeError?
       var v = valueOf[name.toInt()];

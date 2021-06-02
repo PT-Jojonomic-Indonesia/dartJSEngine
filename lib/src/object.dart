@@ -31,7 +31,7 @@ class JsObject {
     }
   }
 
-  JsObject getProperty(name, JSEngine jsengine, JSContext ctx) {
+  JsObject? getProperty(name, JSEngine jsengine, JSContext ctx) {
     name = coerceIndex(name);
 
     if (name == 'valueOf') {
@@ -61,7 +61,7 @@ class JsObject {
     */
   }
 
-  Map<dynamic, JsObject> get prototype {
+  Map<dynamic, JsObject?> get prototype {
     return (properties['prototype'] ??= new JsObject()).properties;
   }
 
@@ -75,7 +75,7 @@ class JsObject {
       if (value is JsFunction) {
         obj.properties[key] = value.bind(obj);
       } else {
-        obj.properties[key] = value;
+        obj.properties[key] = value!;
       }
     }
 
@@ -85,8 +85,8 @@ class JsObject {
   @override
   String toString() => '[object Object]';
 
-  JsObject setProperty(name, JsObject value) {
-    return properties[coerceIndex(name)] = value;
+  JsObject? setProperty(name, JsObject? value) {
+    return properties[coerceIndex(name)] = value!;
   }
 }
 

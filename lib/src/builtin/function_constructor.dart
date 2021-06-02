@@ -2,7 +2,7 @@ import 'package:jsparser/jsparser.dart';
 import 'package:jsengine/jsengine.dart';
 
 class JsFunctionConstructor extends JsConstructor {
-  static JsFunctionConstructor singleton;
+  static JsFunctionConstructor? singleton;
 
   factory JsFunctionConstructor(JsObject context) =>
       singleton ??= new JsFunctionConstructor._(context);
@@ -20,7 +20,7 @@ class JsFunctionConstructor extends JsConstructor {
   static JsObject constructor(
       JSEngine jsengine, JsArguments arguments, JSContext ctx) {
     List<String> paramNames;
-    Program body;
+    Program? body;
 
     if (arguments.valueOf.isEmpty) {
       paramNames = <String>[];
@@ -57,7 +57,7 @@ class JsFunctionConstructor extends JsConstructor {
     return f;
   }
 
-  static JsObject apply(
+  static JsObject? apply(
       JSEngine jsengine, JsArguments arguments, JSContext ctx) {
     return coerceToFunction(arguments.getProperty(0.0, jsengine, ctx), (f) {
       var a1 = arguments.getProperty(1.0, jsengine, ctx);
@@ -66,13 +66,13 @@ class JsFunctionConstructor extends JsConstructor {
     });
   }
 
-  static JsObject bind_(
+  static JsObject? bind_(
       JSEngine jsengine, JsArguments arguments, JSContext ctx) {
     return coerceToFunction(arguments.getProperty(0.0, jsengine, ctx),
         (f) => f.bind(arguments.getProperty(1.0, jsengine, ctx) ?? ctx.scope.context));
   }
 
-  static JsObject call_(
+  static JsObject? call_(
       JSEngine jsengine, JsArguments arguments, JSContext ctx) {
     return coerceToFunction(arguments.getProperty(0.0, jsengine, ctx), (f) {
       return jsengine.invoke(f, arguments.valueOf.skip(1).toList(), ctx);

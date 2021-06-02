@@ -3,7 +3,7 @@ import 'object.dart';
 
 class JsArguments extends JsObject {
   @override
-  final List<JsObject> valueOf;
+  final List<JsObject?> valueOf;
   final JsObject callee;
 
   JsArguments(this.valueOf, this.callee) {
@@ -11,7 +11,7 @@ class JsArguments extends JsObject {
     properties['length'] = new JsNumber(valueOf.length);
 
     for (int i = 0; i < valueOf.length; i++) {
-      properties[i.toDouble()] = valueOf[i];
+      properties[i.toDouble()] = valueOf[i]!;
     }
   }
 
