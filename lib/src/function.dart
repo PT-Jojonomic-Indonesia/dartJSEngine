@@ -3,14 +3,14 @@ import 'package:jsengine/jsengine.dart';
 import 'package:symbol_table/symbol_table.dart';
 
 /// The Dart function that is responsible for the logic of a given [JsFunction].
-typedef JsObject JsFunctionCallback(
+typedef JsObject? JsFunctionCallback(
     JSEngine jsengine, JsArguments arguments, JSContext ctx);
 
 class JsFunction extends JsObject {
-  final JsObject Function(JSEngine, JsArguments, JSContext) f;
-  final JsObject context;
-  SymbolTable<JsObject> closureScope;
-  Node declaration;
+  final JsObject? Function(JSEngine, JsArguments, JSContext) f;
+  final JsObject? context;
+  SymbolTable<JsObject?>? closureScope;
+  Node? declaration;
 
   JsFunction(this.context, this.f) {
     typeof = 'function';
@@ -32,10 +32,10 @@ class JsFunction extends JsObject {
     }
   }
 
-  void set name(String value) => properties['name'] = new JsString(value);
+  void set name(String? value) => properties['name'] = new JsString(value);
 
   @override
-  JsObject getProperty(name, JSEngine jsengine, JSContext ctx) {
+  JsObject? getProperty(name, JSEngine jsengine, JSContext ctx) {
     if (name is JsString) {
       return getProperty(name.valueOf, jsengine, ctx);
     } else if (name == 'apply') {
@@ -66,7 +66,7 @@ class JsFunction extends JsObject {
     }
   }
 
-  JsFunction bind(JsObject newContext) {
+  JsFunction bind(JsObject? newContext) {
     if (newContext == null) return bind(new JsNull());
 
     var ff = new JsFunction(newContext, f)

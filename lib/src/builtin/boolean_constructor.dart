@@ -1,7 +1,7 @@
 import 'package:jsengine/jsengine.dart';
 
 class JsBooleanConstructor extends JsConstructor {
-  static JsBooleanConstructor singleton;
+  static JsBooleanConstructor? singleton;
 
   factory JsBooleanConstructor(JsObject context) =>
       singleton ??= new JsBooleanConstructor._(context);

@@ -7,7 +7,7 @@ import 'stack.dart';
  * JSContext defines what is the current scope
  */
 class JSContext {
-  final SymbolTable<JsObject> scope;
+  final SymbolTable<JsObject?> scope;
   final CallStack callStack;
 
   JSContext(this.scope, this.callStack);
@@ -16,7 +16,7 @@ class JSContext {
     return new JSContext(scope.createChild(), callStack.duplicate());
   }
 
-  JSContext bind(JsObject context) {
+  JSContext bind(JsObject? context) {
     return createChild()..scope.context = context;
   }
 }

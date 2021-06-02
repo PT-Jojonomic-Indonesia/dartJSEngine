@@ -5,7 +5,7 @@ import 'literal.dart';
 import 'object.dart';
 import 'JSEngine.dart';
 
-bool canCoerceToNumber(JsObject object) {
+bool canCoerceToNumber(JsObject? object) {
   return object is JsNumber ||
       object is JsBoolean ||
       object is JsNull ||
@@ -14,7 +14,7 @@ bool canCoerceToNumber(JsObject object) {
       object.properties.containsKey('valueOf');
 }
 
-double coerceToNumber(JsObject object, JSEngine samurai, JSContext ctx) {
+double coerceToNumber(JsObject? object, JSEngine samurai, JSContext ctx) {
   if (object is JsNumber) {
     return object.valueOf;
   } else if (object == null) {
@@ -22,11 +22,11 @@ double coerceToNumber(JsObject object, JSEngine samurai, JSContext ctx) {
   } else if (object is JsNull) {
     return 0.0;
   } else if (object is JsBoolean) {
-    return object.valueOf ? 1.0 : 0.0;
+    return object.valueOf! ? 1.0 : 0.0;
   } else if (object is JsArray && object.valueOf.isEmpty) {
     return 0.0;
   } else if (object is JsString) {
-    return num.tryParse(object.valueOf)?.toDouble() ?? double.nan;
+    return num.tryParse(object.valueOf!)?.toDouble() ?? double.nan;
   } else {
     var valueOfFunc = object?.getProperty('valueOf', samurai, ctx);
 
@@ -43,7 +43,7 @@ double coerceToNumber(JsObject object, JSEngine samurai, JSContext ctx) {
   }
 }
 
-String coerceToString(JsObject object, JSEngine samurai, JSContext ctx) {
+String coerceToString(JsObject? object, JSEngine samurai, JSContext ctx) {
   if (object == null) {
     return 'undefined';
   } else {
@@ -51,23 +51,23 @@ String coerceToString(JsObject object, JSEngine samurai, JSContext ctx) {
   }
 }
 
-JsObject coerceToFunction(JsObject obj, JsObject Function(JsFunction) f) {
+JsObject? coerceToFunction(JsObject? obj, JsObject? Function(JsFunction) f) {
   if (obj is! JsFunction) {
     return null;
   } else {
-    return f(obj as JsFunction);
+    return f(obj);
   }
 }
 
-JsObject coerceToBoolean(JsObject obj, JsObject Function(JsBoolean) f) {
+JsObject coerceToBoolean(JsObject? obj, JsObject Function(JsBoolean) f) {
   if (obj is! JsBoolean) {
     return f(new JsBoolean(obj?.isTruthy ?? false));
   } else {
-    return f(obj as JsBoolean);
+    return f(obj);
   }
 }
 
-JsBoolean safeBooleanOperation(JsObject left, JsObject right, JSEngine samurai,
+JsBoolean safeBooleanOperation(JsObject? left, JsObject? right, JSEngine samurai,
     JSContext ctx, bool Function(num, num) f) {
   var l = coerceToNumber(left, samurai, ctx);
   var r = coerceToNumber(right, samurai, ctx);
@@ -79,6 +79,6 @@ JsBoolean safeBooleanOperation(JsObject left, JsObject right, JSEngine samurai,
   }
 }
 
-JsFunction wrapFunction(JsFunctionCallback f, JsObject context, [String name]) {
+JsFunction wrapFunction(JsFunctionCallback f, JsObject? context, [String? name]) {
   return new JsFunction(context, f)..name = name;
 }

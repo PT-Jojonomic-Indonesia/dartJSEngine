@@ -7,7 +7,7 @@ void loadMiscObjects(JSEngine jsengine) {
   var decodeUriFunction = new JsFunction(global, (jsengine, arguments, ctx) {
     try {
       return new JsString(
-          Uri.decodeFull(arguments.getProperty(0.0, jsengine, ctx)?.toString()));
+          Uri.decodeFull(arguments.getProperty(0.0, jsengine, ctx).toString()));
     } catch (_) {
       return arguments.getProperty(0.0, jsengine, ctx);
     }
@@ -17,7 +17,7 @@ void loadMiscObjects(JSEngine jsengine) {
   new JsFunction(global, (jsengine, arguments, ctx) {
     try {
       return new JsString(
-          Uri.decodeComponent(arguments.getProperty(0.0, jsengine, ctx)?.toString()));
+          Uri.decodeComponent(arguments.getProperty(0.0, jsengine, ctx).toString()));
     } catch (_) {
       return arguments.getProperty(0.0, jsengine, ctx);
     }
@@ -25,7 +25,7 @@ void loadMiscObjects(JSEngine jsengine) {
   var encodeUriFunction = new JsFunction(global, (jsengine, arguments,ctx) {
     try {
       return new JsString(
-          Uri.encodeFull(arguments.getProperty(0.0, jsengine, ctx)?.toString()));
+          Uri.encodeFull(arguments.getProperty(0.0, jsengine, ctx).toString()));
     } catch (_) {
       return arguments.getProperty(0.0, jsengine, ctx);
     }
@@ -35,7 +35,7 @@ void loadMiscObjects(JSEngine jsengine) {
   new JsFunction(global, (jsengine, arguments, ctx) {
     try {
       return new JsString(
-          Uri.encodeComponent(arguments.getProperty(0.0, jsengine, ctx)?.toString()));
+          Uri.encodeComponent(arguments.getProperty(0.0, jsengine, ctx).toString()));
     } catch (_) {
       return arguments.getProperty(0.0, jsengine, ctx);
     }
