@@ -48,7 +48,7 @@ class JSEngine {
       var result = visitStatement(stmt, ctx, stackName);
 
       if (stmt is ExpressionStatement) {
-        out = result!;
+        out = result;
       }
 
       callStack.pop();
@@ -88,13 +88,13 @@ class JSEngine {
 
     if (node is VariableDeclaration) {
       for (var decl in node.declarations) {
-        Variable<JsObject> symbol;
+        Variable<JsObject?> symbol;
         var value = visitExpression(decl.init, ctx);
 
         try {
-          symbol = scope.create(decl.name.value, value: value);
+          symbol = scope.create(decl.name.value!, value: value);
         } on StateError {
-          symbol = scope.assign(decl.name.value, value);
+          symbol = scope.assign(decl.name.value!, value);
         }
 
         if (value is JsFunction && value.isAnonymous && symbol != null) {
@@ -112,7 +112,7 @@ class JSEngine {
     throw callStack.error('Unsupported', node.runtimeType.toString());
   }
 
-  JsObject? visitExpression(Expression node, JSContext ctx) {
+  JsObject? visitExpression(Expression? node, JSContext ctx) {
     var scope = ctx.scope;
     var callStack = ctx.callStack;
 
@@ -121,7 +121,7 @@ class JSEngine {
         return null;
       }
 
-      var symbol = scope.resolve(node.name.value);
+      var symbol = scope.resolve(node.name.value!);
 
       if (symbol != null) {
         return symbol.value;
@@ -144,10 +144,10 @@ class JSEngine {
     }
 
     if (node is ObjectExpression) {
-      var props = <dynamic, JsObject>{};
+      var props = <dynamic, JsObject?>{};
 
       for (var prop in node.properties) {
-        props[prop.nameString] = visitExpression(prop.expression, ctx)!;
+        props[prop.nameString] = visitExpression(prop.expression, ctx);
       }
 
       return new JsObject()..properties.addAll(props);
@@ -174,9 +174,9 @@ class JSEngine {
 
     if (node is IndexExpression) {
       // TODO: What are the actual semantics of this in JavaScript?
-      var target = visitExpression(node.object, ctx);
-      var index = visitExpression(node.property, ctx);
-      return target!.properties[index!.valueOf];
+      var target = visitExpression(node.object, ctx)!;
+      var index = visitExpression(node.property, ctx)!;
+      return target.properties[index.valueOf];
     }
 
     if (node is CallExpression) {
@@ -191,10 +191,10 @@ class JSEngine {
         childScope = childScope.createChild(values: {'arguments': arguments});
         childScope.context = target.context ?? scope.context;
 
-        JsObject result;
+        JsObject? result;
 
         if (target.declaration != null) {
-          callStack.push(target.declaration!.filename!, target.declaration!.line,
+          callStack.push(target.declaration!.filename, target.declaration!.line,
               target.name);
         }
 
@@ -204,7 +204,7 @@ class JSEngine {
           target.f(this, arguments, new JSContext(childScope, callStack));
         } else {
           result = target.f(
-              this, arguments, new JSContext(childScope, callStack))!;
+              this, arguments, new JSContext(childScope, callStack));
         }
 
         if (target.declaration != null) {
@@ -232,14 +232,14 @@ class JSEngine {
     }
 
     if (node is ArrayExpression) {
-      var items = node.expressions!.map((e) => visitExpression(e!, ctx));
-      return new JsArray()..valueOf.addAll(items); // core need non-nullable but visitExpression is nullable
+      var items = node.expressions.map((e) => visitExpression(e, ctx));
+      return new JsArray()..valueOf.addAll(items);
     }
 
     if (node is BinaryExpression) {
       var left = visitExpression(node.left, ctx);
       var right = visitExpression(node.right, ctx);
-      return performBinaryOperation(node.operator, left!, right!, ctx);
+      return performBinaryOperation(node.operator, left, right, ctx);
     }
 
     if (node is AssignmentExpression) {
@@ -248,13 +248,13 @@ class JSEngine {
       if (l is NameExpression) {
         if (node.operator == '=') {
           return scope
-              .assign(l.name.value, visitExpression(node.right, ctx))
+              .assign(l.name.value!, visitExpression(node.right, ctx))
               .value;
         } else {
-          var trimmedOp = node.operator.substring(0, node.operator.length - 1);
+          var trimmedOp = node.operator!.substring(0, node.operator!.length - 1);
           return scope
               .assign(
-                l.name.value,
+                l.name.value!,
                 performNumericalBinaryOperation(
                   trimmedOp,
                   visitExpression(l, ctx),
@@ -271,7 +271,7 @@ class JSEngine {
           return left!.setProperty(
               l.property.value, visitExpression(node.right, ctx));
         } else {
-          var trimmedOp = node.operator.substring(0, node.operator.length - 1);
+          var trimmedOp = node.operator!.substring(0, node.operator!.length - 1);
           return left!.setProperty(
             l.property.value,
             performNumericalBinaryOperation(
@@ -301,7 +301,7 @@ class JSEngine {
         if (left is IndexExpression) {
           var l = visitExpression(left.object, ctx);
           var property = visitExpression(left.property, ctx);
-          var idx = coerceToNumber(property!, this, ctx);
+          var idx = coerceToNumber(property, this, ctx);
 
           if (l is JsArray && idx.isFinite) {
             if (idx >= 0 && idx < l.valueOf.length) {
@@ -329,13 +329,13 @@ class JSEngine {
         case '!':
           return new JsBoolean(expr?.isTruthy != true);
         case '+':
-          return new JsNumber(coerceToNumber(expr!, this, ctx));
+          return new JsNumber(coerceToNumber(expr, this, ctx));
         case '~':
-          var n = coerceToNumber(expr!, this, ctx);
+          var n = coerceToNumber(expr, this, ctx);
           if (!n.isFinite) return new JsNumber(n);
           return new JsNumber(-(n + 1));
         case '-':
-          var value = coerceToNumber(expr!, this, ctx);
+          var value = coerceToNumber(expr, this, ctx);
 
           if (value == null || value.isNaN) {
             return new JsNumber(double.nan);
@@ -359,8 +359,8 @@ class JSEngine {
     throw callStack.error('Unsupported', node.runtimeType.toString());
   }
 
-  JsObject performBinaryOperation(
-      String op, JsObject left, JsObject right, JSContext ctx) {
+  JsObject? performBinaryOperation(
+      String? op, JsObject? left, JsObject? right, JSContext ctx) {
     // TODO: May be: ==, !=, ===, !==, in, instanceof
     if (op == '==') {
       // TODO: Loose equality
@@ -386,8 +386,8 @@ class JSEngine {
   }
 
   JsObject performNumericalBinaryOperation(
-      String op, JsObject? left, JsObject? right, JSContext ctx) {
-    if (op == '+' && (!canCoerceToNumber(left!) || !canCoerceToNumber(right!))) {
+      String? op, JsObject? left, JsObject? right, JSContext ctx) {
+    if (op == '+' && (!canCoerceToNumber(left) || !canCoerceToNumber(right))) {
       return new JsString(left.toString() + right.toString());
     } else {
       var l = coerceToNumber(left, this, ctx);
@@ -429,14 +429,14 @@ class JSEngine {
   }
 
   JsObject visitFunctionNode(FunctionNode node, JSContext ctx) {
-    JsFunction? function;
+    late JsFunction function;
     function = new JsFunction(ctx.scope.context, (samurai, arguments, ctx) {
       for (double i = 0.0; i < node.params.length; i++) {
-        ctx.scope.create(node.params[i.toInt()].value,
+        ctx.scope.create(node.params[i.toInt()].value!,
             value: arguments.properties[i]);
       }
 
-      return visitStatement(node.body, ctx, function!.name);
+      return visitStatement(node.body, ctx, function.name);
     });
     function.declaration = node;
     function.properties['length'] = new JsNumber(node.params.length);
@@ -444,7 +444,7 @@ class JSEngine {
 
     // TODO: What about hoisting???
     if (node.name != null) {
-      ctx.scope.create(node.name!.value, value: function, constant: true);
+      ctx.scope.create(node.name!.value!, value: function, constant: true);
     }
 
     function.closureScope = ctx.scope.fork();
@@ -452,15 +452,15 @@ class JSEngine {
     return function;
   }
 
-  JsObject invoke(JsFunction target, List<JsObject?> args, JSContext ctx) {
-    var scope = ctx.scope, callStack = ctx.callStack;
+  JsObject? invoke(JsFunction target, List<JsObject?> args, JSContext ctx) {
+    var scope = ctx.scope, callStack = ctx.callStack as SymbolTable<JsObject?>;
     var childScope = (target.closureScope ?? scope);
     var arguments = new JsArguments(args, target);
     childScope = childScope.createChild(values: {'arguments': arguments});
     childScope.context = target.context ?? scope.context;
     print('${target.context} => ${childScope.context}');
 
-    JsObject result;
+    JsObject? result;
 
     if (target.declaration != null) {
       callStack.push(
@@ -468,7 +468,7 @@ class JSEngine {
     }
 
     result =
-        target.f(this, arguments, new JSContext(childScope, callStack))!;
+        target.f(this, arguments, new JSContext(childScope, callStack as CallStack));
 
     if (target.declaration != null) {
       callStack.pop();

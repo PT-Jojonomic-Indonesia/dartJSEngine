@@ -11,7 +11,7 @@ class JsArguments extends JsObject {
     properties['length'] = new JsNumber(valueOf.length);
 
     for (int i = 0; i < valueOf.length; i++) {
-      properties[i.toDouble()] = valueOf[i]!;
+      properties[i.toDouble()] = valueOf[i];
     }
   }
 

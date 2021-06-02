@@ -7,15 +7,15 @@ class CallStack {
 
   void clear() => _frames.clear();
 
-  void push(String? filename, int? line, String? name) {
-    _frames.addFirst(new Frame(filename!, line!, name!));
+  void push(String? filename, int? line, String name) {
+    _frames.addFirst(new Frame(filename, line, name));
   }
 
   void pop() {
     if (_frames.isNotEmpty) _frames.removeFirst();
   }
 
-  SamuraiException error(String type, String message) {
+  SamuraiException error(String type, String? message) {
     var msg = '${type}Error: $message';
     var frames = _frames.toList();
     return new SamuraiException(msg, frames);
@@ -27,8 +27,8 @@ class CallStack {
 }
 
 class Frame {
-  final String filename;
-  final int line;
+  final String? filename;
+  final int? line;
   final String name;
 
   Frame(this.filename, this.line, this.name);

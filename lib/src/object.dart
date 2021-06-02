@@ -5,12 +5,12 @@ import 'JSEngine.dart';
 import 'util.dart';
 
 class JsObject {
-  final Map<dynamic, JsObject> properties = {};
+  final Map<dynamic, JsObject?> properties = {};
 
   //final Map<String, JsObject> prototype = {};
   String typeof = 'object';
 
-  bool get isTruthy => true;
+  bool? get isTruthy => true;
 
   dynamic get valueOf => properties;
 
@@ -75,7 +75,7 @@ class JsObject {
       if (value is JsFunction) {
         obj.properties[key] = value.bind(obj);
       } else {
-        obj.properties[key] = value!;
+        obj.properties[key] = value;
       }
     }
 
@@ -86,7 +86,7 @@ class JsObject {
   String toString() => '[object Object]';
 
   JsObject? setProperty(name, JsObject? value) {
-    return properties[coerceIndex(name)] = value!;
+    return properties[coerceIndex(name)] = value;
   }
 }
 
@@ -94,7 +94,7 @@ class JsBuiltinObject extends JsObject {}
 
 class JsPrototype extends JsObject {
   @override
-  final Map<String, JsObject> properties;
+  final Map<String?, JsObject?> properties;
 
   JsPrototype(this.properties);
 }

@@ -1,14 +1,14 @@
 import 'object.dart';
 
 class JsBoolean extends JsObject {
-  final bool valueOf;
+  final bool? valueOf;
 
   JsBoolean(this.valueOf) {
     typeof = 'boolean';
   }
 
   @override
-  bool get isTruthy => valueOf;
+  bool? get isTruthy => valueOf;
 
   @override
   String toString() => valueOf.toString();
@@ -16,28 +16,28 @@ class JsBoolean extends JsObject {
 
 // TODO: Prototype???
 class JsString extends JsObject {
-  final String valueOf;
+  final String? valueOf;
 
   JsString(this.valueOf) {
     typeof = 'string';
   }
 
   @override
-  bool get isTruthy => valueOf.isNotEmpty;
+  bool get isTruthy => valueOf!.isNotEmpty;
 
   @override
-  String toString() => valueOf;
+  String toString() => valueOf!;
 }
 
 // TODO: Prototype???
 class JsNumber extends JsObject {
-  final num _valueOf;
+  final num? _valueOf;
 
   JsNumber(this._valueOf) {
     typeof = 'number';
   }
 
-  double get valueOf => _valueOf.toDouble();
+  double get valueOf => _valueOf!.toDouble();
 
   @override
   bool get isTruthy => valueOf != 0.0;

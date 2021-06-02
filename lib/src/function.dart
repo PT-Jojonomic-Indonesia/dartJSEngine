@@ -8,8 +8,8 @@ typedef JsObject? JsFunctionCallback(
 
 class JsFunction extends JsObject {
   final JsObject? Function(JSEngine, JsArguments, JSContext) f;
-  final JsObject context;
-  SymbolTable<JsObject>? closureScope;
+  final JsObject? context;
+  SymbolTable<JsObject?>? closureScope;
   Node? declaration;
 
   JsFunction(this.context, this.f) {
@@ -32,7 +32,7 @@ class JsFunction extends JsObject {
     }
   }
 
-  void set name(String value) => properties['name'] = new JsString(value);
+  void set name(String? value) => properties['name'] = new JsString(value);
 
   @override
   JsObject? getProperty(name, JSEngine jsengine, JSContext ctx) {
@@ -66,7 +66,7 @@ class JsFunction extends JsObject {
     }
   }
 
-  JsFunction bind(JsObject newContext) {
+  JsFunction bind(JsObject? newContext) {
     if (newContext == null) return bind(new JsNull());
 
     var ff = new JsFunction(newContext, f)
